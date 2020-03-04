@@ -1,3 +1,6 @@
+// - Trabalho Estrutura de Dados 1 - Codificacao em Morse para Texto - 
+// Alunos : Fillipe Augusto de S Gomes e Kaio Nink Cardoso
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

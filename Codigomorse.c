@@ -7,14 +7,84 @@
 typedef struct treeW{
     char value;
     char morseCode[10];
-    struct treeStruct *left; //root
-    struct treeStruct *right;//root
+    struct treeW *left; //root
+    struct treeW *right;//root
 }treeW;
 
 treeW *buildTree(treeW *root,char Lcode[],int tam,char value,int pos);
 void PreOrder(treeW *root);
 void Translate(treeW **root,char morseCode[],int pos,int tam);
 
+
+//goes all the way to the tree allocating nodes til it satisfies the morsecode tabs
+//ps: * is used to mark nodes with no letters allocated
+treeW *buildTree(treeW *root, char Lcode[], int tam, char value, int pos)
+{
+    if (root == NULL)
+    {
+        root = (treeW*) malloc(sizeof(treeW));
+        root->left = NULL;
+        root->right = NULL;
+        root->value = '*';
+    }
+
+    if (pos < tam)
+    {
+        if (Lcode[pos] == '.')
+        {
+            root->left = buildTree(root->left,Lcode,tam,value,pos+1);
+        }else{
+            root->right = buildTree(root->right,Lcode,tam,value,pos+1);
+        } 
+
+    }else{
+        if (root->value == '*')
+        {
+            root->value = value;
+            Lcode[pos] = '\0';
+            strcpy(root->morseCode,Lcode);
+        }else{
+            puts("ERROR - CANT LOAD TREE FILE");
+            printf("%c\n",value);
+        }   
+    }
+    return root;
+}
+
+// print treeW
+void PreOrder(treeW *root)
+{
+    if (root != NULL)
+    {
+        if(root->value != '*')
+            printf("%s %c\n", root->morseCode,root->value);
+    
+    PreOrder(root->left);
+    PreOrder(root->right);
+    }
+}
+
+
+//goes all the way to the letter node that needs to be translated
+void Translate(treeW **root, char morseCode[], int pos, int tam)
+{
+    treeW *node;
+    node = *root;
+    if (pos < tam)
+    {
+        if (morseCode[pos] == '.')
+        {
+            Translate(&(node)->left,morseCode,pos+1,tam);
+        } else if(morseCode[pos] == '-'){
+            Translate(&(node)->right,morseCode,pos+1,tam);
+        }
+
+    }else
+    {
+        if (node->value != '*')
+            printf("%c", node->value);
+    }
+}
 
 int main(){
 
@@ -87,74 +157,4 @@ int main(){
     }while (op != 0);
 
     return 0;
-}
-
-//goes all the way to the tree allocating nodes til it satisfies the morsecode tabs
-//ps: * is used to mark nodes with no letters allocated
-treeW *buildTree(treeW *root, char Lcode[], int tam, char value, int pos)
-{
-    if (root == NULL)
-    {
-        root = (treeW*) malloc(sizeof(treeW));
-        root->left = NULL;
-        root->right = NULL;
-        root->value = '*';
-    }
-
-    if (pos < tam)
-    {
-        if (Lcode[pos] == '.')
-        {
-            root->left = buildTree(root->left,Lcode,tam,value,pos+1);
-        }else{
-            root->right = buildTree(root->right,Lcode,tam,value,pos+1);
-        } 
-
-    }else{
-        if (root->value == '*')
-        {
-            root->value = value;
-            Lcode[pos] = '\0';
-            strcpy(root->morseCode,Lcode);
-        }else{
-            puts("ERROR - CANT LOAD TREE FILE");
-            printf("%c\n",value);
-        }   
-    }
-    return root;
-}
-
-// print treeW
-void PreOrder(treeW *root)
-{
-    if (root != NULL)
-    {
-        if(root->value != '*')
-            printf("%s %c\n", root->morseCode,root->value);
-    
-    PreOrder(root->left);
-    PreOrder(root->right);
-    }
-}
-
-
-//goes all the way to the letter node that needs to be translated
-void Translate(treeW **root, char morseCode[], int pos, int tam)
-{
-    treeW *node;
-    node = *root;
-    if (pos < tam)
-    {
-        if (morseCode[pos] == '.')
-        {
-            Translate(&(node)->left,morseCode,pos+1,tam);
-        } else if(morseCode[pos] == '-'){
-            Translate(&(node)->right,morseCode,pos+1,tam);
-        }
-
-    }else
-    {
-        if (node->value != '*')
-            printf("%c", node->value);
-    }
 }
